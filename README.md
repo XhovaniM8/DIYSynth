@@ -43,4 +43,4 @@ a 32-bit unsigned integer that specifies the size of the data subchunk (in bytes
 
 The #ifndef and #define preprocessor directives at the top of the file are used to prevent multiple definitions of the SMinimalWaveFileHeader struct when this header file is included in multiple source files.
 
-**this code defines a struct that can be used to parse and write the headers of WAV files.**
+**This code defines a struct that can be used to parse and write the headers of WAV files.**
