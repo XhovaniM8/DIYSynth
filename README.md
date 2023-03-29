@@ -2,10 +2,10 @@
 ## SMinimalWaveFileHeader
 The struct's fields are defined as follows:
 
-# m_szChunkID:
+### m_szChunkID:
 an array of four bytes that contains the ASCII characters "RIFF", indicating that this is a RIFF format WAV file.
 
-# m_nChunkSize:
+### m_nChunkSize:
 a 32-bit unsigned integer that specifies the size of the entire file (in bytes) minus 8 bytes, which is the size of the RIFF chunk ID and chunk size fields themselves.
 
 m_szFormat: an array of four bytes that contains the ASCII characters "WAVE", indicating that this is a WAV file.
