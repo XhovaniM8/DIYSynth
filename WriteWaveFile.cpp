@@ -1,3 +1,7 @@
+#ifndef WRITEWAVEFILE_H
+#define WRITEWAVEFILE_H
+
+
 #include "SMinimalWaveFileHeader.h"
 #include <string.h>
 
@@ -43,3 +47,5 @@ bool WriteWaveFile(const char* szFileName, void* pData, int32_t nDataSize, int16
     fclose(File);
     return true;
 }
+
+#endif // WRITEWAVEFILE_H
