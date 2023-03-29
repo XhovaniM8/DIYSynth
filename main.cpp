@@ -1,89 +1,19 @@
-#include <stdint.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdbool.h>
-
-bool WriteWaveFile(const char *szFileName, void *pData, int32_t nDataSize, int16_t nNumChannels,
-                   int32_t nSampleRate, int32_t nBitsPerSample);
-
-// the main
+#include "WriteWaveFile.cpp"
+#include "SminimalWaveFileHeader.h"
 
 int main(){
+    // parameters for WriteWaveFile are (filename, data, datasize, numchannels, samplerate, bitspersample)
 
-    // parameters for writewavefile are (filename, data, datasize, numchannels, samplerate, bitspersample)
-
+    // Example 1: Write a wave file with no data
     WriteWaveFile("test.wav", NULL, 0, 0, 0, 0);
-    WriteWaveFile("test2.wav", NULL, 1, 4, 44100, 16);
+
+    // Example 2: Write a wave file with data
+    int16_t data[] = {0, 100, 200, 300};
+    int32_t dataSize = sizeof(data);
+    int16_t numChannels = 2;
+    int32_t sampleRate = 44100;
+    int16_t bitsPerSample = 16;
+    WriteWaveFile("test2.wav", data, dataSize, numChannels, sampleRate, bitsPerSample);
+
     return 0;
 }
-
-
-// This struct is the minimal required header for a wav file
-struct SMinimalWaveFileHeader
-{
-    // The Main Chunk
-    unsigned char m_szChunkID[4];
-    uint32_t m_nChunkSize;
-    unsigned char m_szFormat[4];
-
-    // sub chunk 1 "fmt"
-    unsigned char m_szSubChunk1ID[4];
-    uint32_t m_nSubChunk1Size;
-    uint16_t m_nAudioFormat;
-    uint16_t m_nNumChannels;
-    uint32_t m_nSampleRate;
-    uint32_t m_nByteRate;
-    uint16_t m_nBlockAlign;
-    uint16_t m_nBitsPerSample;
-
-    // sub chunk 2 "data"
-    unsigned char m_szSubChunk2ID[4];
-    uint32_t m_nSubChunk2Size;
-
-    // then comes the data...
-};
-
-bool WriteWaveFile(const char *szFileName, void *pData, int32_t nDataSize, int16_t nNumChannels,
-                   int32_t nSampleRate, int32_t nBitsPerSample)
-{
-    // open the file if we can
-    FILE *File = fopen(szFileName, "w+b");
-    if (!File)
-    {
-        return false;
-    }
-
-    // write the header
-    SMinimalWaveFileHeader waveHeader;
-  
-    //fill out the main chunk
-	memcpy(waveHeader.m_szChunkID,"RIFF",4);
-	waveHeader.m_nChunkSize = nDataSize + 36;
-	memcpy(waveHeader.m_szFormat,"WAVE",4);
-
-	//fill out sub chunk 1 "fmt "
-	memcpy(waveHeader.m_szSubChunk1ID,"fmt ",4);
-	waveHeader.m_nSubChunk1Size = 16;
-	waveHeader.m_nAudioFormat = 1;
-	waveHeader.m_nNumChannels = nNumChannels;
-	waveHeader.m_nSampleRate = nSampleRate;
-	waveHeader.m_nByteRate = nSampleRate * nNumChannels * nBitsPerSample / 8;
-	waveHeader.m_nBlockAlign = nNumChannels * nBitsPerSample / 8;
-	waveHeader.m_nBitsPerSample = nBitsPerSample;
-
-	//fill out sub chunk 2 "data"
-	memcpy(waveHeader.m_szSubChunk2ID,"data",4);
-	waveHeader.m_nSubChunk2Size = nDataSize;
-
-	//write the header
-	fwrite(&waveHeader,sizeof(SMinimalWaveFileHeader),1,File);
-
-	//write the wave data itself
-	fwrite(pData,nDataSize,1,File);
-
-	//close the file and return success
-	fclose(File);
-	return true;
-}
-
-
